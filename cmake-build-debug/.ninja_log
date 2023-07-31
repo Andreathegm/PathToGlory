@@ -1,0 +1,9 @@
+# ninja log v5
+61	1093	7124502626641617	CMakeFiles/PathToGlory.dir/GameCharacter.cpp.obj	199a42fd93240317
+1192	2075	7124517128753191	PathToGlory.exe	e5f6d3b748867d7a
+7	1190	7124517120029987	CMakeFiles/PathToGlory.dir/GameTile.cpp.obj	da7a006042184fd5
+46	533	7124502621065487	CMakeFiles/PathToGlory.dir/GameMap.cpp.obj	4a2279f606c032ef
+7	1264	7124511177395295	CMakeFiles/PathToGlory.dir/main.cpp.obj	a3ab44a53cdeb0d6
+10	1644	7124941077998323	CMakeFiles/PathToGlory.dir/Game.cpp.obj	682d59fce6d8c921
+9	1259	7124941392595618	CMakeFiles/PathToGlory.dir/Game.cpp.obj	682d59fce6d8c921
+1260	2047	7124941400383933	PathToGlory.exe	538af24616623b69
