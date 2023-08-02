@@ -10,21 +10,25 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
-
+#include "GameMap.h"
 class Game {
 public:
     Game();
-    virtual ~Game(){};
-
+    virtual ~Game();
     void update();
     void render();
+    const bool IsRunning();
+    void pollEvents();
+
+    GameMap *getMap() const;
+
 private:
     void initVariables();
     void initWindow();
     sf::RenderWindow* window;
     sf::Event event;
-
-
+    sf::VideoMode videoMode;
+    GameMap* map;
 };
 
 
