@@ -7,25 +7,27 @@
 
 #include "GameTile.h"
 #include <vector>
-#include <memory>
+#include <unordered_map>
+#include<queue>
+#include <functional>
+
 class GameMap {
 public:
     //cons and des
-    GameMap();
-    GameMap(int mapSize);
-    void draw(sf::RenderWindow& window) const;
+    explicit GameMap(int mapSize);
     ~GameMap();
 
      //method
+     std::vector<sf::Vector2f> aStar( GameTile* start, GameTile* destination);
+    void draw(sf::RenderWindow& window) const;
 
     //getter and setter
-
-    const std::vector<std::vector<std::unique_ptr<GameTile>>> &getTilemap() const;
-
+    const std::vector<std::vector<GameTile*>> &getTilemap() const;
     int getMapsize() const;
+    void reset();
 
 private:
-    std::vector<std::vector<std::unique_ptr<GameTile>>> tilemap;
+    std::vector<std::vector<GameTile*>> tilemap;
     int mapSize;
 
 

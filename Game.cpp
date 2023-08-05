@@ -15,7 +15,6 @@ Game::Game() {
 
 }
 Game::~Game() {
-    delete map;
     delete window;
 }
 
@@ -66,6 +65,3 @@ void Game::pollEvents() {
 
 }
 
-GameMap *Game::getMap() const {
-    return map;
-}

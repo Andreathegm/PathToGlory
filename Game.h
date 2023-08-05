@@ -20,7 +20,6 @@ public:
     const bool IsRunning();
     void pollEvents();
 
-    GameMap *getMap() const;
 
 private:
     void initVariables();
@@ -28,7 +27,6 @@ private:
     sf::RenderWindow* window;
     sf::Event event;
     sf::VideoMode videoMode;
-    GameMap* map;
 };
 
 
