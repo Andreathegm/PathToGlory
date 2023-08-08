@@ -24,7 +24,7 @@ public:
     //getter and setter
     const std::vector<std::vector<GameTile*>> &getTilemap() const;
     int getMapsize() const;
-    void reset();
+    void reset(bool act=false);
 
 private:
     std::vector<std::vector<GameTile*>> tilemap;

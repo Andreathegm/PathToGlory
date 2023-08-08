@@ -8,13 +8,13 @@ int main() {
     float gridSizeF = 100.f;
     unsigned gridSizeU = static_cast<unsigned>(gridSizeF);
    //create the map
-    GameMap map(100);
-
+    GameMap map(10);
     std::vector<sf::Vector2f> bestPath;
     GameTile* start;
     GameTile* destination;
+    GameTile* BlockBlocks;
     GameTile* misclick[]={nullptr, nullptr};
-     int clickcounter[]={0,0};
+     int clickcounter[]={0,0,0};
     int currentPathIndex = 0;
     bool isPathComplete = false;
     bool active[]={false , false,false};
@@ -41,6 +41,9 @@ int main() {
     text.setPosition(10.f, 10.f);
     text.setString("TEST");
     text.setFont(font);
+    sf::Texture obs_text;
+    obs_text.loadFromFile("C:/Users/HP/CLionProjects/PathToGlory/Resources/Walll.png");
+
 
 
 //Init window
@@ -75,22 +78,306 @@ int main() {
             mousePosGrid.y = mousePosView.y / gridSizeU;
         tileselector.setPosition(mousePosGrid.x * gridSizeF, mousePosGrid.y * gridSizeF);
 
+        sf::Event ev;
+        while (window.pollEvent(ev)) {
+            if (ev.type == sf::Event::Closed)
+                window.close();
+            if (ev.type == sf::Event::KeyReleased) {
+                if (ev.key.code == sf::Keyboard::X) {
+                    if(mousePosGrid.x>=0 && mousePosGrid.x<map.getMapsize() && mousePosGrid.y>=0 && mousePosGrid.y<map.getMapsize())
+                    BlockBlocks = map.getTilemap()[mousePosGrid.x][mousePosGrid.y];
+                    else
+                        break;
+                    //Check if tile has already been assigned
+                    if(!BlockBlocks->isAccessible()){
+                        BlockBlocks->setAccessible(true);
+                        BlockBlocks->setVisible(false);}
+
+                    else
+                    {
+                        BlockBlocks->setPos(sf::Vector2f(mousePosGrid.x,mousePosGrid.y));
+                        BlockBlocks->setVisible(true);
+                        BlockBlocks->setAccessible(false);
+
+                        //if all 8 tile -> draw a fire sprite
+                        if (mousePosGrid.x+1>=0 && mousePosGrid.y-1>=0 &&
+                            mousePosGrid.x-1>=0 && mousePosGrid.y+1>=0
+                            &&mousePosGrid.x+1<map.getMapsize() && mousePosGrid.y-1<map.getMapsize() &&
+                            mousePosGrid.x-1<map.getMapsize() && mousePosGrid.y+1<map.getMapsize() &&
+
+                            !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isAccessible()&&
+                            !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isAccessible() &&
+                            !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y-1]->isAccessible()&&
+                            !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y-1]->isAccessible() &&
+                            !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y+1]->isAccessible()&&
+                            !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y+1]->isAccessible() &&
+                            !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isAccessible()&&
+                            !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isAccessible()){
+                            BlockBlocks->setObsSpriteTexture(obs_text,"full");
+                            BlockBlocks->setCenter(true);
+
+                            //if both orizontal and vertical not accessible , draw a 4connected wall
+                        }else if(mousePosGrid.x+1>=0 && mousePosGrid.y-1>=0
+                                 &&mousePosGrid.x-1>=0 && mousePosGrid.y+1>=0
+                                 &&mousePosGrid.x+1<map.getMapsize() && mousePosGrid.y-1<map.getMapsize() &&
+                                 mousePosGrid.x-1<map.getMapsize() && mousePosGrid.y+1<map.getMapsize() &&
+                                 !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isAccessible()&&
+                                 !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isAccessible() &&
+                                 !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isAccessible()&&
+                                 !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isAccessible() &&
+                                 !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isCenter() &&
+                                 !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isCenter() &&
+                                 !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isCenter() &&
+                                 !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isCenter()){
+
+                            BlockBlocks->setObsSpriteTexture(obs_text,"4_dir");
+                            map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+                            map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+
+                        }
+                            //Now drawing 3connected wall if 3 tile are not accesible
+
+                            //1) Top
+                        else if(mousePosGrid.x+1>=0 && mousePosGrid.x-1>=0 &&mousePosGrid.y+1>=0
+                                &&mousePosGrid.x+1<map.getMapsize() && mousePosGrid.x-1<map.getMapsize() &&
+                                mousePosGrid.y+1<map.getMapsize() &&
+                                !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isAccessible()&&
+                                !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isAccessible() &&
+                                !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isAccessible() &&
+                                !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isCenter() &&
+                                !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isCenter() &&
+                                !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isCenter()
+
+                                ){
+                            if(mousePosGrid.y-1>=0 && mousePosGrid.y-1<map.getMapsize() && map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y-1]->isAccessible() &&
+                               map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y-1]->isAccessible()){
+
+                                BlockBlocks->setObsSpriteTexture(obs_text,"3_top");
+                                map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+                                map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");}
+                            else{
+                                BlockBlocks->setObsSpriteTexture(obs_text,"3_top");
+                            }
+
+                            //Down
+                        }else if(mousePosGrid.x+1>=0 && mousePosGrid.x-1>=0 &&mousePosGrid.y-1>=0
+                                 &&mousePosGrid.x+1<map.getMapsize() && mousePosGrid.x-1<map.getMapsize() &&
+                                 mousePosGrid.y-1<map.getMapsize() && !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isAccessible()&&
+                                 !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isAccessible() &&
+                                 !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isAccessible() &&
+                                 !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isCenter() &&
+                                 !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isCenter() &&
+                                 !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isCenter()
+                                ){
+                            if(mousePosGrid.y+1>=0 && mousePosGrid.y+1<map.getMapsize() && map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y+1]->isAccessible() &&
+                               map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y+1]->isAccessible()){
+
+                                BlockBlocks->setObsSpriteTexture(obs_text,"3_down");
+                                map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+                                map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");}
+                            else{
+                                BlockBlocks->setObsSpriteTexture(obs_text,"3_down");
+                            }
+                            //Left
+                        }else if(mousePosGrid.x-1>=0 && mousePosGrid.y-1>=0 &&mousePosGrid.y+1>=0
+                                 &&mousePosGrid.x-1<map.getMapsize() && mousePosGrid.y-1<map.getMapsize() &&
+                                 mousePosGrid.y+1<map.getMapsize() && !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isAccessible()&&
+                                 !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isAccessible() &&
+                                 !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isAccessible() &&
+                                 !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isCenter()
+                                ){
+                            BlockBlocks->setObsSpriteTexture(obs_text,"3_left");
+                            map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+
+
+
+                        }
+                            //Right
+                        else if(mousePosGrid.x+1>=0 && mousePosGrid.y-1>=0 &&mousePosGrid.y+1>=0 &&
+                                mousePosGrid.x+1<map.getMapsize() && mousePosGrid.y-1<map.getMapsize() &&
+                                mousePosGrid.y+1<map.getMapsize() && !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isAccessible()&&
+                                !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isAccessible() &&
+                                !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isAccessible() &&
+                                !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isCenter()
+                                ){
+                            BlockBlocks->setObsSpriteTexture(obs_text,"3_right");
+                            map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+
+                        }
+                            //drawing 2connected wall
+
+                            //1) Right
+                        else if(mousePosGrid.x+1>=0 && mousePosGrid.y-1>=0 &&
+                                mousePosGrid.x+1<map.getMapsize() && mousePosGrid.y-1<map.getMapsize() &&
+                                !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isAccessible()&&
+                                !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isAccessible() &&
+                                !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isCenter() &&
+                                !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isCenter()
+                                ){
+                            if( mousePosGrid.y+1>=0 && mousePosGrid.y+1<map.getMapsize() && map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y+1]->isAccessible()
+                            && map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y-1]->isAccessible() ){
+                                BlockBlocks->setObsSpriteTexture(obs_text,"turn_right");
+                                map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+                                map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->setPos(sf::Vector2f(mousePosGrid.x+1,mousePosGrid.y));
+
+                            }
+                            else{
+                                BlockBlocks->setObsSpriteTexture(obs_text,"turn_right");
+
+                            }
+                        }
+                            //2) Left_top
+                        else if(mousePosGrid.x-1>=0 && mousePosGrid.y+1>=0
+                                &&mousePosGrid.x-1<map.getMapsize() && mousePosGrid.y+1<map.getMapsize() &&
+                                !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isAccessible()&&
+                                !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isAccessible() &&
+                                !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isCenter() &&
+                                !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isCenter()) {
+                            if(mousePosGrid.y-1>=0 && mousePosGrid.y-1<map.getMapsize() &&
+                            map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y-1]->isAccessible() &&
+                            map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y+1]->isAccessible()){
+                                BlockBlocks->setObsSpriteTexture(obs_text,"turn_left_top");
+                                map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+                                map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->setPos(sf::Vector2f(mousePosGrid.x-1,mousePosGrid.y));
+                            }
+                            else{
+                                BlockBlocks->setObsSpriteTexture(obs_text,"turn_left_top");
+                            }
+
+                        }
+                            // Left_Bottom
+                        else{
+                            if(mousePosGrid.x-1>=0 && mousePosGrid.y-1>=0
+                               &&mousePosGrid.x-1<map.getMapsize() && mousePosGrid.y-1<map.getMapsize() &&
+                               !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isAccessible()&&
+                               !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isAccessible() &&
+                               !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isCenter() &&
+                               !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isCenter()
+                                    ){
+                                if(mousePosGrid.y+1>=0 && mousePosGrid.y+1<map.getMapsize() && map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y+1]->isAccessible() &&
+                                    map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y-1]->isAccessible()){
+                                    BlockBlocks->setObsSpriteTexture(obs_text, "turn_left");
+                                    map.getTilemap()[mousePosGrid.x - 1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+                                    map.getTilemap()[mousePosGrid.x - 1][mousePosGrid.y]->setPos(sf::Vector2f(mousePosGrid.x - 1, mousePosGrid.y));
+                                }
+                                else {
+                                    BlockBlocks->setObsSpriteTexture(obs_text, "turn_left");
+
+                                }
+                            }
+
+                                // Right_Top
+                            else if(mousePosGrid.x+1>=0 && mousePosGrid.y+1>=0
+                                    &&mousePosGrid.x+1<map.getMapsize() && mousePosGrid.y+1<map.getMapsize() &&
+                                    !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isAccessible()&&
+                                    !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isAccessible() &&
+                                    !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isCenter() &&
+                                    !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isCenter())
+                            {
+                                if(mousePosGrid.y-1>=0 && mousePosGrid.y-1<map.getMapsize() && map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y-1]->isAccessible()
+                                && map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y+1]->isAccessible())
+                                   {
+                                    BlockBlocks->setObsSpriteTexture(obs_text,"turn_right_top");
+                                    map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+                                    map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->setPos(sf::Vector2f(mousePosGrid.x+1,mousePosGrid.y));}
+                                else{
+                                    BlockBlocks->setObsSpriteTexture(obs_text,"turn_right_top");
+
+                                }
+                            }
+
+                                // X_direction_right
+                            else if(mousePosGrid.y+1>=0 &&  mousePosGrid.y+1< map.getMapsize() &&
+                                    mousePosGrid.y-1>=0 &&  mousePosGrid.y-1< map.getMapsize() &&
+                                    mousePosGrid.x-1>=0 &&mousePosGrid.x-1<map.getMapsize() &&
+                                    mousePosGrid.x+1>=0 &&mousePosGrid.x+1<map.getMapsize() &&
+                                    !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isAccessible() &&
+                                    !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isCenter() &&
+                                    !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isCenter() &&
+                                    !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isCenter() &&
+                                    !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isCenter()
+                                    )
+                            {
+                                if(!map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y+1]->isAccessible()
+                                   || !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y-1]->isAccessible())
+                                    BlockBlocks->setObsSpriteTexture(obs_text, "x_dir");
+
+                                else{
+                                    BlockBlocks->setObsSpriteTexture(obs_text, "x_dir");
+                                    map.getTilemap()[mousePosGrid.x - 1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+                                }
+                            }
+                                //X_direction_left
+                            else if ( mousePosGrid.y-1>=0 &&  mousePosGrid.y-1< map.getMapsize() &&
+                                      mousePosGrid.y+1>=0 &&  mousePosGrid.y+1< map.getMapsize() &&
+                                      mousePosGrid.x+1>=0 &&mousePosGrid.x+1<map.getMapsize() &&
+                                      !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isAccessible()&&
+                                      !map.getTilemap()[mousePosGrid.x][mousePosGrid.y-1]->isCenter() &&
+                                      !map.getTilemap()[mousePosGrid.x][mousePosGrid.y+1]->isCenter() &&
+                                      !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isCenter()
+                                    ){
+
+                                if((!map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y-1]->isAccessible()
+                                    || !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y+1]->isAccessible())){
+                                    BlockBlocks->setObsSpriteTexture(obs_text,"x_dir");
+                                }
+                                else{
+                                    BlockBlocks->setObsSpriteTexture(obs_text,"x_dir");
+                                    map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->setObsSpriteTexture(obs_text,"x_dir");
+
+                                }
+
+                            } //Straight wall between two obstacles
+                            else if( mousePosGrid.x-1>=0 &&  mousePosGrid.x-1< map.getMapsize() &&
+                                     mousePosGrid.x+1>=0 &&  mousePosGrid.x+1< map.getMapsize() &&
+                                     !map.getTilemap()[mousePosGrid.x-1][mousePosGrid.y]->isAccessible()
+                                     && !map.getTilemap()[mousePosGrid.x+1][mousePosGrid.y]->isAccessible()){
+                                BlockBlocks->setObsSpriteTexture(obs_text,"x_dir");
+
+                            }
+                            else if(mousePosGrid.y==0 || mousePosGrid.y==map.getMapsize()-1  ) {
+                                if (mousePosGrid.y+1>=0 && mousePosGrid.y+1<map.getMapsize() &&
+                                !map.getTilemap()[mousePosGrid.x][mousePosGrid.y + 1]->isAccessible()){
+                                    BlockBlocks->setObsSpriteTexture(obs_text);
+                                }
+                                else{
+                                    if(mousePosGrid.y-1>=0 && mousePosGrid.y-1<map.getMapsize() &&
+                                       !map.getTilemap()[mousePosGrid.x][mousePosGrid.y - 1]->isAccessible())
+                                    BlockBlocks->setObsSpriteTexture(obs_text);
+                                    else{
+                                        BlockBlocks->setObsSpriteTexture(obs_text,"x_dir");
+                                    }
+                                }
+                            }
+                            else{
+                                BlockBlocks->setObsSpriteTexture(obs_text);}
+
+                        }
+
+                    }
+                }
+
+            }
+        }
+
+
         //start hero path
         if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
             if(clickcounter[0]==1){
                 misclick[0]->getTile().setFillColor(sf::Color::White);
                 clickcounter[0]=0;
             }
-            start=map.getTilemap()[mousePosGrid.x][mousePosGrid.y];
-            misclick[0]=start;
-            start->getTile().setFillColor(sf::Color::Blue);
-            mousePosGrid.x *= gridSizeF;
-            mousePosGrid.x += gridSizeF / 4;
-            mousePosGrid.y *= gridSizeF;
-            hero.setPosition(static_cast<sf::Vector2f>(mousePosGrid));
-            active[0]= true;
-            clickcounter[0]++;
-
+            start = map.getTilemap()[mousePosGrid.x][mousePosGrid.y];
+            if(start->isAccessible()) {
+                misclick[0] = start;
+                start->getTile().setFillColor(sf::Color::Blue);
+                mousePosGrid.x *= gridSizeF;
+                mousePosGrid.x += gridSizeF / 4;
+                mousePosGrid.y *= gridSizeF;
+                hero.setPosition(static_cast<sf::Vector2f>(mousePosGrid));
+                active[0] = true;
+                clickcounter[0]++;
+            }
         }
         if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
             if(clickcounter[1]==1){
@@ -103,6 +390,10 @@ int main() {
             active[1]=true;
             clickcounter[1]++;
         }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+            map.reset();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+            map.reset(true);
         if(active[0] && active[1]) {
             bestPath = map.aStar(start, destination);
 
@@ -116,8 +407,7 @@ int main() {
                         // Effettua qui le operazioni del ciclo che desideri eseguire con l'intervallo desiderato
                         hero.setPosition(sf::Vector2f(bestPath[currentPathIndex].x * gridSizeF,
                                                       bestPath[currentPathIndex].y * gridSizeF));
-                        map.getTilemap()[bestPath[currentPathIndex].x][bestPath[currentPathIndex].y]->getTile().setFillColor(
-                                sf::Color::Green);
+                        map.getTilemap()[bestPath[currentPathIndex].x][bestPath[currentPathIndex].y]->getTile().setFillColor(sf::Color::Green);
                         // Incrementa l'indice per passare alla prossima posizione nel vettore path
                         currentPathIndex++;
 
@@ -133,7 +423,7 @@ int main() {
             }
         }
     if(active[2]) {
-        map.reset();
+       // map.reset();
         for(bool & i : active)
             i=false;
         isPathComplete= false;
@@ -148,12 +438,8 @@ int main() {
 
         text.setString(ss.str());
         //events
-        sf::Event ev;
-        while (window.pollEvent(ev)) {
-            if (ev.type == sf::Event::Closed)
-                window.close();
 
-        }
+
         //Update GC
         hero.move();
         //Update

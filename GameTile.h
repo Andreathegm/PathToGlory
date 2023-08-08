@@ -13,6 +13,7 @@
 #define PATHTOGLORY_GAMETILE_H
 
 #include<memory>
+#include<cmath>
 
 class GameTile {
 public:
@@ -30,7 +31,7 @@ public:
 
     //method
     void draw(sf::RenderWindow& window) const;
-    int ManhattanDistance(const GameTile& targetTile);
+    float ManhattanDistance(const GameTile& targetTile);
     int f_cost() const ;
 
     //getter and setter
@@ -47,6 +48,18 @@ public:
     GameTile* getParent() const;
     void setParent(GameTile *parent);
 
+     sf::Sprite getObsSprite();
+
+    void setObsSpriteTexture(const sf::Texture& ob_texture,std::string="Stright");
+
+    bool isVisible() const;
+
+    void setVisible(bool visible);
+
+    bool isCenter() const;
+
+    void setCenter(bool center);
+
 private:
     sf::Vector2f pos;
     sf::RectangleShape tile;
@@ -54,8 +67,10 @@ private:
     int g,h;
     GameTile* parent;
     bool accessible;
-
-
+    sf::Sprite obs_sprite;
+    bool visible;
+    bool scalable=false;
+    bool center;
 
 };
 

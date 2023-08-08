@@ -37,8 +37,7 @@ const std::vector<std::vector<GameTile*>> &GameMap::getTilemap() const {
 }
 
 
-std::vector<sf::Vector2f> GameMap::
-aStar( GameTile* start, GameTile* destination) {
+std::vector<sf::Vector2f> GameMap::aStar( GameTile* start, GameTile* destination) {
 
     struct CompareTiles {
         bool operator()(const GameTile *lhs, const GameTile *rhs) const {
@@ -76,6 +75,9 @@ aStar( GameTile* start, GameTile* destination) {
            sf::Vector2f new_pos(current->getPos().x+dx[i],current->getPos().y+dy[i]);
 
             if (new_pos.x >= 0 && new_pos.x < mapSize && new_pos.y >= 0 && new_pos.y < mapSize && tilemap[new_pos.x][new_pos.y]->isAccessible()) {
+               if (i % 2 != 0 && !tilemap[current->getPos().x][new_pos.y]->isAccessible() && !tilemap[new_pos.x][current->getPos().y]->isAccessible()) {
+                   continue;
+                }
                 int new_g = current->getG() + (i % 2 == 0 ? 10 : 14); // Movimento orizzontale/verticale: costo 10, diagonale: costo 14
                 int new_h = tilemap[new_pos.x][new_pos.y]->ManhattanDistance(*destination);
                 int new_f = new_g + new_h;
@@ -95,15 +97,34 @@ aStar( GameTile* start, GameTile* destination) {
 
 }
 
-void GameMap::reset() {
+void GameMap::reset(bool act) {
+    std::vector<GameTile*> pavement;
     for(int i=0;i<mapSize;i++)
         for(int j=0;j<mapSize;j++) {
             tilemap[i][j]->setH(0);
             tilemap[i][j]->setG(0);
-            tilemap[i][j]->getTile().setFillColor(sf::Color::White);
             tilemap[i][j]->setParent(nullptr);
-
+            if(act){
+                if(tilemap[i][j]->isAccessible())
+                    pavement.emplace_back(tilemap[i][j]);
+                }
+            else{
+            tilemap[i][j]->setVisible(false);
+            tilemap[i][j]->setAccessible(true);
+            tilemap[i][j]->setCenter(false);
+            tilemap[i][j]->getTile().setFillColor(sf::Color::White);}
+        }
+    if(!pavement.empty()) {
+        for (const auto &k: pavement) {
+            k->setVisible(false);
+            k->setAccessible(true);
+            k->setCenter(false);
+            k->getTile().setFillColor(sf::Color::White);
 
         }
+        pavement.clear();
+    }
+
+
 }
 
