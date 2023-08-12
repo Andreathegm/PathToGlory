@@ -44,20 +44,22 @@ void GameCharacter::attack(GameCharacter &enemy) {
 
 }
 
-const sf::Vector2f &GameCharacter::getPosition() const {
+sf::Vector2f &GameCharacter::getPosition()  {
     return position;
 }
 
-const sf::Sprite &GameCharacter::getGcSprite() const {
+ sf::Sprite &GameCharacter::getGcSprite()  {
     return gcSprite;
 }
 
-const sf::Texture &GameCharacter::getGctexture() const {
+const sf::Texture &GameCharacter::getGctexture() const{
     return gctexture;
 }
 
 void GameCharacter::setPosition(const sf::Vector2f &position) {
+    GameCharacter::position=position;
     gcSprite.setPosition(position);
+
 
 }
 
@@ -69,44 +71,45 @@ void GameCharacter::setGctexture(const sf::Texture &gctexture) {
     GameCharacter::gctexture = gctexture;
 }
 
-GameCharacter::GameCharacter(std::string name, int hp, int att, int def, sf::Vector2f pos) {
-    if(gctexture.loadFromFile(name)) {
-        //setup Sprite
+GameCharacter::GameCharacter(sf::Texture& texture, int hp, int att, int def, sf::Vector2f pos) : position(pos) {
+
+        gctexture=texture;
         gcSprite.setTexture(gctexture);
         gcSprite.setTextureRect(sf::IntRect(266, 226, 25, 55));
         gcSprite.scale(sf::Vector2f(1.5,1.5));
         gcSprite.setPosition(pos);
-        //current_frame=sf::IntRect (266, 226, 25, 55);
-        //animationTimer.restart();
-    }
+
+
+   // Rightwalk=new Animation(0, 0 ,43,58,13,gctexture);
     GameCharacter::HP=hp;
     GameCharacter::Attack=att;
     GameCharacter::defense=def;
 
 
+
+
 }
 
 void GameCharacter::move() {
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-        gcSprite.move(sf::Vector2f(0,-1));
-
+   /* if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
+        dir.y=-1.0f;
+        //gcSprite.move(sf::Vector2f(0,-1));
     }
     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-        gcSprite.move(sf::Vector2f(-1,0));
+        dir.x=-1.0f;
+
+      //  gcSprite.move(sf::Vector2f(-1,0));
     }
     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-        gcSprite.move(sf::Vector2f(0,1));
+        dir.y+=1.0f;
+       // gcSprite.move(sf::Vector2f(0,1));
     }
     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-        /*if(animationTimer.getElapsedTime().asSeconds()>=0.1){
+        dir.x+=1.0f;
+       // gcSprite.move(sf::Vector2f(1,0));
+        }*/
 
-            current_frame.left+=20;
-        if(current_frame.left>=400)
-            current_frame.left=0;
-        animationTimer.restart();
-        gcSprite.setTextureRect(current_frame);*/
-        gcSprite.move(sf::Vector2f(1,0));
-        }
+
 
 
 
@@ -119,11 +122,22 @@ void GameCharacter::draw(sf::RenderWindow& window) {
 
 }
 
-void GameCharacter::move_to_position(std::vector<sf::Vector2f>& path) {
-    for(const auto& i : path ) {
-            position=i;
-            gcSprite.setPosition(i.x*100,i.y*100);
-    }
+
+void GameCharacter::Setdirection(const sf::Vector2f &dir) {
+    vel=dir*speed;
+
 }
+
+void GameCharacter::Update(float dt) {
+    position+= vel* dt;
+
+}
+
+void GameCharacter::setTexturerect(sf::IntRect rect) {
+    gcSprite.setTextureRect(rect);
+
+}
+
+
 
 

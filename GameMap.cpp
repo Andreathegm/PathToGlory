@@ -6,7 +6,15 @@
 
 
 
-GameMap::~GameMap() {}
+GameMap::~GameMap() {
+    for(std::vector<GameTile*> &i : tilemap){
+        for(auto &k : i ){
+            delete k;
+        }
+    }
+    tilemap.clear();
+
+}
 
 int GameMap::getMapsize() const {
     return mapSize;
@@ -17,7 +25,7 @@ GameMap::GameMap( int mapSize): mapSize(mapSize) {
     for (int x = 0; x < mapSize; x++) {
         tilemap[x].resize(mapSize);
         for (int y = 0; y < mapSize; y++) {
-            tilemap[x][y] = new GameTile(static_cast<float>(x), static_cast<float>(y), sf::Color::White);
+            tilemap[x][y] = new GameTile(static_cast<float>(x), static_cast<float>(y));
         }
         }
     }
@@ -41,7 +49,7 @@ std::vector<sf::Vector2f> GameMap::aStar( GameTile* start, GameTile* destination
 
     struct CompareTiles {
         bool operator()(const GameTile *lhs, const GameTile *rhs) const {
-            // Ordina i nodi in base alla funzione di valutazione f(n) = g(n) + h(n)
+            // Compare nodes following this--> f(n) = g(n) + h(n)
             return lhs->f_cost() > rhs->f_cost();
         }
     };
@@ -49,7 +57,7 @@ std::vector<sf::Vector2f> GameMap::aStar( GameTile* start, GameTile* destination
     std::priority_queue<GameTile*,std::vector<GameTile*>,CompareTiles> openSet;
      std::unordered_map<int, GameTile*> closedSet;
     start->setG(0);
-    start->setH(start->ManhattanDistance(*destination));
+    start->setH(start->EuclidianDistance(*destination));
     openSet.push(start);
     while (!openSet.empty()) {
         auto current = openSet.top();
@@ -79,7 +87,7 @@ std::vector<sf::Vector2f> GameMap::aStar( GameTile* start, GameTile* destination
                    continue;
                 }
                 int new_g = current->getG() + (i % 2 == 0 ? 10 : 14); // Movimento orizzontale/verticale: costo 10, diagonale: costo 14
-                int new_h = tilemap[new_pos.x][new_pos.y]->ManhattanDistance(*destination);
+                int new_h = tilemap[new_pos.x][new_pos.y]->EuclidianDistance(*destination);
                 int new_f = new_g + new_h;
 
                 if (closedSet.find(new_pos.y * mapSize + new_pos.x) == closedSet.end() || new_f < tilemap[new_pos.x][new_pos.y]->f_cost()) {

@@ -7,51 +7,72 @@
 
 
 #include <iostream>
-#include <SFML/Graphics.hpp>// occhio
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Network.hpp>
+#include "Animation.h"
 #include "GameMap.h"
 class GameCharacter {
 
 public:
     //constructor and distructor
-    GameCharacter(std::string name,int hp,int att,int def,sf::Vector2f pos);
-    ~GameCharacter(){};
+    GameCharacter(sf::Texture& texture,int hp,int att,int def,sf::Vector2f pos);
+    ~GameCharacter()=default;
 
     //getter and setter
+
+    //name
     const std::string &getName() const;
     void setName(const std::string &name);
+
+    //hp
     int getHp() const;
     void setHp(int hp);
+
+    //attack
     int getAttack() const;
     void setAttack(int attack);
+
+    //defense
     int getDefense() const;
     void setDefense(int defense);
-    void attack(GameCharacter& enemy);
-    const sf::Vector2f &getPosition() const;
-    const sf::Sprite &getGcSprite() const;
-    const sf::Texture &getGctexture() const;
+
+    // position
+     sf::Vector2f &getPosition() ;
     void setPosition(const sf::Vector2f &position);
+
+    // sprite
+     sf::Sprite &getGcSprite() ;
     void setGcSprite(const sf::Sprite &gcSprite);
+
+    // texture
+    const sf::Texture &getGctexture() const;
     void setGctexture(const sf::Texture &gctexture);
 
-// method
+    void setTexturerect(sf::IntRect rect);
+
+
+    // method
     void move();
-    void move_to_position(std::vector<sf::Vector2f>& path);
+    void attack(GameCharacter& enemy);
+
+    // set direction and perceiving changes
+    void Setdirection(const sf::Vector2f& dir);
+    void Update(float dt);
+
+    //draw
     void draw(sf::RenderWindow& window);
 
 
 private:
-
+    //name and Carateristic
     std::string name;
     int HP,Attack,defense;
+
+    // position and setting
+    static constexpr float speed =100.f;
+    sf::Vector2f vel ={ 0.0f , 0.0f};
     sf::Vector2f position;
     sf::Sprite gcSprite;
     sf::Texture gctexture;
-    sf::IntRect current_frame;
-    sf::Clock animationTimer;
+
 
 };
 

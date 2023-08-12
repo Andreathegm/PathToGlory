@@ -19,12 +19,13 @@ public:
 
      //method
      std::vector<sf::Vector2f> aStar( GameTile* start, GameTile* destination);
-    void draw(sf::RenderWindow& window) const;
+     void draw(sf::RenderWindow& window) const;
+     void reset(bool act=false);
 
-    //getter and setter
-    const std::vector<std::vector<GameTile*>> &getTilemap() const;
-    int getMapsize() const;
-    void reset(bool act=false);
+     //getter and setter
+     const std::vector<std::vector<GameTile*>> &getTilemap() const;
+     int getMapsize() const;
+
 
 private:
     std::vector<std::vector<GameTile*>> tilemap;

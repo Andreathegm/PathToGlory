@@ -4,8 +4,8 @@
 
 #include "GameTile.h"
 
-const sf::Vector2f GameTile::getPos() const {
-    return pos;
+sf::Vector2f GameTile::getPos() const {
+      return pos;
 }
 
 void GameTile::setPos(const sf::Vector2f &posi) {
@@ -15,23 +15,23 @@ void GameTile::setPos(const sf::Vector2f &posi) {
 
 
  sf::RectangleShape &GameTile::getTile()  {
-    return tile;
+      return tile;
 }
 
 float GameTile::getGridSizeF() const {
-    return gridSizeF;
+      return gridSizeF;
 }
 
 
 GameTile::GameTile(float x, float y, const sf::Color &fillColor,bool access,int G,int H ) {
     //set position
-
     pos.x = x;
     pos.y = y;
+
     //set up tile(rectangle shape)
     tile.setSize(sf::Vector2f(gridSizeF, gridSizeF));
     tile.setFillColor(fillColor);
-    tile.setOutlineThickness(1.5);
+    tile.setOutlineThickness(4);
     tile.setOutlineColor(sf::Color::Black);
     tile.setPosition(x * gridSizeF, y * gridSizeF);
 
@@ -62,7 +62,7 @@ bool GameTile::operator>(const GameTile &other) const {
     return !operator<(other);
 }
 
-float GameTile::ManhattanDistance(const GameTile &targetTile) {
+float GameTile::EuclidianDistance(const GameTile &targetTile) {
     return sqrt((targetTile.pos.x-pos.x)*(targetTile.pos.x-pos.x)+(targetTile.pos.y-pos.y)*(targetTile.pos.y-pos.y));
 }
 
@@ -86,8 +86,8 @@ GameTile *GameTile::getParent() const {
     return parent;
 }
 
-void GameTile::setParent(GameTile *parent) {
-    GameTile::parent = parent;
+void GameTile::setParent(GameTile *Parent) {
+    parent=Parent;
 }
 
 bool GameTile::isAccessible() const {
@@ -151,15 +151,15 @@ void GameTile::setObsSpriteTexture(const sf::Texture &ob_texture,std::string dir
 
 }
 bool GameTile::isVisible() const {
-    return visible;
+     return visible;
 }
 
 void GameTile::setVisible(bool visible) {
-    GameTile::visible = visible;
+     GameTile::visible = visible;
 }
 
 bool GameTile::isCenter() const {
-    return center;
+     return center;
 }
 
 void GameTile::setCenter(bool cent) {
