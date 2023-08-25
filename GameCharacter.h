@@ -13,65 +13,49 @@ class GameCharacter {
 
 public:
     //constructor and distructor
-    GameCharacter(sf::Texture& texture,int hp,int att,int def,sf::Vector2f pos);
+    GameCharacter(sf::Texture& texture,sf::Vector2f pos,GameMap* map);
+    explicit GameCharacter(GameMap* map);
+    explicit GameCharacter();
     ~GameCharacter()=default;
 
-    //getter and setter
-
-    //name
-    const std::string &getName() const;
-    void setName(const std::string &name);
-
-    //hp
-    int getHp() const;
-    void setHp(int hp);
-
-    //attack
-    int getAttack() const;
-    void setAttack(int attack);
-
-    //defense
-    int getDefense() const;
-    void setDefense(int defense);
-
+    //GETTER AND SETTER
     // position
-     sf::Vector2f &getPosition() ;
+    sf::Vector2f &getPosition() ;
     void setPosition(const sf::Vector2f &position);
 
     // sprite
-     sf::Sprite &getGcSprite() ;
+    sf::Sprite &getGcSprite() ;
     void setGcSprite(const sf::Sprite &gcSprite);
 
     // texture
     const sf::Texture &getGctexture() const;
     void setGctexture(const sf::Texture &gctexture);
 
+
+
+    //METHOD
+   //dynamic move
+    void move(std::string dir);
+    void UpdateAnimation(int row,float deltatime);
     void setTexturerect(sf::IntRect rect);
 
+    //Check  collision for the walls and the grid
+    void collision(float offset_x,float offset_y,bool downmovement=false);
+    void GridCollision();
 
-    // method
-    void move();
-    void attack(GameCharacter& enemy);
 
-    // set direction and perceiving changes
-    void Setdirection(const sf::Vector2f& dir);
-    void Update(float dt);
-
-    //draw
+    //draw and animation
     void draw(sf::RenderWindow& window);
-
+    Animation *getAnimation() const;
 
 private:
-    //name and Carateristic
-    std::string name;
-    int HP,Attack,defense;
 
     // position and setting
-    static constexpr float speed =100.f;
-    sf::Vector2f vel ={ 0.0f , 0.0f};
     sf::Vector2f position;
     sf::Sprite gcSprite;
     sf::Texture gctexture;
+    Animation* animation;
+    GameMap* map;
 
 
 };

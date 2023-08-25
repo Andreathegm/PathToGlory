@@ -29,4 +29,21 @@ void Animation::Update(int row, float delta_time) {
 
 }
 
+const sf::Vector2u &Animation::getImagecount() const {
+    return imagecount;
+}
+
+void Animation::setImagecount(const sf::Vector2u &imagecount) {
+    Animation::imagecount = imagecount;
+}
+
+const sf::Vector2u &Animation::getCurrentimage() const {
+    return currentimage;
+}
+
+void Animation::setCurrentimage(const sf::Vector2u &currentimage) {
+    Animation::currentimage = currentimage;
+}
+
+
 

@@ -3,46 +3,8 @@
 //
 
 #include "GameCharacter.h"
+#include "collision.h"
 
-const std::string &GameCharacter::getName() const {
-    return name;
-}
-
-void GameCharacter::setName(const std::string &name) {
-    GameCharacter::name = name;
-}
-
-int GameCharacter::getHp() const {
-    return HP;
-}
-
-void GameCharacter::setHp(int hp) {
-    HP = hp;
-}
-
-int GameCharacter::getAttack() const {
-    return Attack;
-}
-
-void GameCharacter::setAttack(int attack) {
-    Attack = attack;
-}
-
-int GameCharacter::getDefense() const {
-    return defense;
-}
-
-void GameCharacter::setDefense(int defense) {
-    GameCharacter::defense = defense;
-}
-
-void GameCharacter::attack(GameCharacter &enemy) {
-    if(Attack>0) {
-        enemy.HP = Attack - enemy.defense;
-    }
-
-
-}
 
 sf::Vector2f &GameCharacter::getPosition()  {
     return position;
@@ -71,49 +33,33 @@ void GameCharacter::setGctexture(const sf::Texture &gctexture) {
     GameCharacter::gctexture = gctexture;
 }
 
-GameCharacter::GameCharacter(sf::Texture& texture, int hp, int att, int def, sf::Vector2f pos) : position(pos) {
+GameCharacter::GameCharacter(sf::Texture& texture, sf::Vector2f pos,GameMap* map) :
+animation( new Animation(&texture, sf::Vector2u(11, 4), 0.1)), position(pos),gctexture(texture),map(map) {
 
-        gctexture=texture;
         gcSprite.setTexture(gctexture);
         gcSprite.setTextureRect(sf::IntRect(266, 226, 25, 55));
         gcSprite.scale(sf::Vector2f(1.5,1.5));
         gcSprite.setPosition(pos);
 
 
-   // Rightwalk=new Animation(0, 0 ,43,58,13,gctexture);
-    GameCharacter::HP=hp;
-    GameCharacter::Attack=att;
-    GameCharacter::defense=def;
-
 
 
 
 }
 
-void GameCharacter::move() {
-   /* if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-        dir.y=-1.0f;
-        //gcSprite.move(sf::Vector2f(0,-1));
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-        dir.x=-1.0f;
+void GameCharacter::move(std::string dir) {
 
-      //  gcSprite.move(sf::Vector2f(-1,0));
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-        dir.y+=1.0f;
-       // gcSprite.move(sf::Vector2f(0,1));
-    }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-        dir.x+=1.0f;
-       // gcSprite.move(sf::Vector2f(1,0));
-        }*/
-
-
-
-
-
-
+    if(dir=="W")
+    setPosition(sf::Vector2f(position.x,position.y-0.5));
+    else
+        if(dir=="A")
+            setPosition(sf::Vector2f(position.x-0.5,position.y));
+        else
+            if(dir=="S")
+                setPosition(sf::Vector2f(position.x,position.y+0.5));
+            else
+                if(dir=="D")
+                    setPosition(sf::Vector2f(position.x+0.5,position.y));
 
 }
 
@@ -122,21 +68,84 @@ void GameCharacter::draw(sf::RenderWindow& window) {
 
 }
 
-
-void GameCharacter::Setdirection(const sf::Vector2f &dir) {
-    vel=dir*speed;
-
-}
-
-void GameCharacter::Update(float dt) {
-    position+= vel* dt;
-
-}
-
 void GameCharacter::setTexturerect(sf::IntRect rect) {
     gcSprite.setTextureRect(rect);
 
 }
+
+void GameCharacter::UpdateAnimation(int row, float deltatime) {
+    animation->Update(row,deltatime);
+
+}
+
+Animation *GameCharacter::getAnimation() const {
+    return animation;
+}
+
+void GameCharacter::collision(float offset_x, float offset_y,bool downmovement) {
+
+    sf::Vector2f actual_pos(position);
+
+    auto collision = actual_pos.x + offset_x;
+    auto collisiony = actual_pos.y + offset_y;
+
+    auto gridSizeF=map->getTilemap()[0][0]->getGridSizeF();
+    auto gridSizeU=static_cast<unsigned>(gridSizeF);
+    if (collision > 0 && collision < map->getMapsize() * gridSizeF &&
+        collisiony > 0 && collisiony < map->getMapsize() * gridSizeF &&
+        !map->getTilemap()[collision / gridSizeU][collisiony / gridSizeU]->isAccessible()) {
+
+        if (Collision::PixelPerfectTest(gcSprite, map->getTilemap()[collision / gridSizeU]
+        [collisiony / gridSizeU]->getO_sprite()))
+
+
+            if(offset_x>0 && offset_y>0 && !downmovement)
+            move("A");
+            else
+                if(offset_x>0 && offset_y>0 )
+                    move("W");
+                else
+                    if(offset_x>0)
+                        move("S");
+                    else
+                        move("D");
+
+    }
+}
+
+void GameCharacter::GridCollision() {
+    auto gridSizeU=static_cast<unsigned >(map->getTilemap()[0][0]->getGridSizeF());
+
+    //Check right_grid collision
+    if (position.x <map->getTilemap()[0][position.y / gridSizeU]->getPos().x)
+        setPosition(sf::Vector2f(0, position.y));
+
+    // Check top_grid collision
+    if (position.y <
+        map->getTilemap()[position.x / gridSizeU][0]->getPos().y)
+        setPosition(sf::Vector2f(position.x, 0));
+
+    // Check down_grid collision
+    if (static_cast<unsigned>(position.y) / gridSizeU == map->getMapsize() - 1 &&
+        position.y + gcSprite.getGlobalBounds().height >
+        map->getTilemap()[map->getMapsize() - 1][position.y / gridSizeU]->getPos().y +
+        map->getTilemap()[map->getMapsize() - 1][position.y /
+                                               gridSizeU]->getTile().getGlobalBounds().height)
+        setPosition(sf::Vector2f(position.x,position.y - 1));
+
+}
+
+GameCharacter::GameCharacter() {
+
+
+}
+
+GameCharacter::GameCharacter(GameMap *map) {
+    this->map=map;
+
+}
+
+
 
 
 

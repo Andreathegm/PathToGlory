@@ -11,22 +11,58 @@
 #include <SFML/Network.hpp>
 
 #include "GameMap.h"
+#include "GameCharacter.h"
+
 class Game {
 public:
+    Game(unsigned width,unsigned height);
     Game();
     virtual ~Game();
-    void update();
-    void render();
-    const bool IsRunning();
-    void pollEvents();
 
+    //METHODS
+
+    //game open-close
+    const bool IsRunning();
+    void close();
+
+    //Events
+    bool pollEvent();
+    virtual void pollEvents(sf::Vector2u & mousePosGrid,GameTile* BlockBlocks,sf::Texture& obs_text,bool& walking,float&zoomfactor,sf::View& view);
+    void Linkmap(GameMap* map); //link the map to the game to check several boundaries
+    bool TileSelectorBoundaries(sf::Vector2f mousePosView);
+    void handleWallPlacement(sf::Vector2u & mousePosGrid,GameTile* BlockBlocks,sf::Texture& obs_text);//Change texture of the wall
+    //from the surrounding
+
+
+    //render
+    void clear();
+    void draw(sf::Drawable& drawable);
+    void draw(GameMap map);
+    void display();
+
+    //GETTER AND SETTER
+
+    //getter and setter for View
+    void setView(sf::View& view);
+    sf::View getDefaultView();
+    sf::View getView() ;
+    void SetWindow(sf::RenderWindow* new_window){
+        window=new_window;
+    }
+    //getter for the window
+    const sf::VideoMode &getVideoMode() const;
+    sf::RenderWindow &getWindow();
+    
+    const sf::Event &getEvent() const;
+
+    void setEvent(const sf::Event &event);
 
 private:
-    void initVariables();
-    void initWindow();
     sf::RenderWindow* window;
     sf::Event event;
     sf::VideoMode videoMode;
+    GameMap* map;
+    sf::View view;
 };
 
 

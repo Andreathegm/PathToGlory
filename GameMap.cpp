@@ -87,7 +87,7 @@ std::vector<sf::Vector2f> GameMap::aStar( GameTile* start, GameTile* destination
                    continue;
                 }
                 int new_g = current->getG() + (i % 2 == 0 ? 10 : 14); // Movimento orizzontale/verticale: costo 10, diagonale: costo 14
-                int new_h = tilemap[new_pos.x][new_pos.y]->EuclidianDistance(*destination);
+                int new_h = tilemap[new_pos.x][new_pos.y]->EuclidianDistance(*destination)*10;
                 int new_f = new_g + new_h;
 
                 if (closedSet.find(new_pos.y * mapSize + new_pos.x) == closedSet.end() || new_f < tilemap[new_pos.x][new_pos.y]->f_cost()) {
@@ -120,14 +120,14 @@ void GameMap::reset(bool act) {
             tilemap[i][j]->setVisible(false);
             tilemap[i][j]->setAccessible(true);
             tilemap[i][j]->setCenter(false);
-            tilemap[i][j]->getTile().setFillColor(sf::Color::White);}
+            tilemap[i][j]->getTile().setFillColor(sf::Color::Transparent);}
         }
     if(!pavement.empty()) {
         for (const auto &k: pavement) {
             k->setVisible(false);
             k->setAccessible(true);
             k->setCenter(false);
-            k->getTile().setFillColor(sf::Color::White);
+            k->getTile().setFillColor(sf::Color::Transparent);
 
         }
         pavement.clear();

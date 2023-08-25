@@ -19,6 +19,12 @@ public:
     //methods
     void Update(int row,float delta_time);
 
+    //GETTER AND SETTER
+    const sf::Vector2u &getImagecount() const;
+    void setImagecount(const sf::Vector2u &imagecount);
+    const sf::Vector2u &getCurrentimage() const;
+    void setCurrentimage(const sf::Vector2u &currentimage);
+
 public:
     //SpriteSheet_Selector
     sf::FloatRect  uvRect;

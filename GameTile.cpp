@@ -166,6 +166,10 @@ void GameTile::setCenter(bool cent) {
      center=cent;
 }
 
+sf::Sprite &GameTile::getO_sprite() {
+    return obs_sprite;
+}
+
 
 
 

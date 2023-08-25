@@ -18,7 +18,7 @@
 class GameTile {
 public:
     //cons and destructor
-    GameTile(float x, float y, const sf::Color& fillColor = sf::Color::White,bool access=true,int G=0,int H=0 );
+    GameTile(float x, float y, const sf::Color& fillColor = sf::Color::Transparent,bool access=true,int G=0,int H=0 );
     ~GameTile()=default;
 
 
@@ -27,7 +27,7 @@ public:
     bool operator<(const GameTile& other) const;
     bool operator>(const GameTile& other) const;
 
-    //method
+    //METHODS
     void draw(sf::RenderWindow& window) const;
     float EuclidianDistance(const GameTile& targetTile);
     int f_cost() const ;
@@ -54,6 +54,7 @@ public:
 
     //Texture for walls
     sf::Sprite getObsSprite();
+    sf::Sprite& getO_sprite();
     void setObsSpriteTexture(const sf::Texture& ob_texture,std::string="Stright");
 
     //set whether drawing texture
