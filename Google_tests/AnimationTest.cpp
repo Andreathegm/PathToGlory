@@ -3,17 +3,30 @@
 //
 #include <gtest/gtest.h>
 #include "../Animation.h"
+#include "../collision.h"
+class AnimationTest : public ::testing::Test{
+protected:
+    void SetUp() override {
+        Collision::CreateTextureAndBitmask(animation_texture,"C:/Users/HP/CLionProjects/PathToGlory/Resources/prisonerEditing2_.png");
+        width_per_frame=animation_texture.getSize().x/ImageCount.x;
+        width_per_frame=animation_texture.getSize().x/ImageCount.x;
+        animation.setImagecount(ImageCount);
+        animation.setTotaltime(0);
+        animation.setSwitchTime(0.1);
+        animation.uvRect.width=animation_texture.getSize().x/static_cast<float>(ImageCount.x);
+        animation.uvRect.height=animation_texture.getSize().y/static_cast<float>(ImageCount.y);
 
-
-TEST(AnimationTest,switchImage){
-
-    sf::Vector2u ImageCount(11,4);
+    }
+    void TearDown() override {
+    }
+    sf::Vector2u ImageCount{11,4};
     sf::Texture animation_texture;
-    animation_texture.loadFromFile("C:/Users/HP/CLionProjects/PathToGlory/Resources/prisonerEditing2_.png");
-    sf::Vector2u size= animation_texture.getSize();
-    auto width_per_frame=size.x/ImageCount.x;
-    auto height_per_frame=size.y/ImageCount.y;
-    Animation animation(&animation_texture,ImageCount,0.1);
+    unsigned width_per_frame;
+    unsigned height_per_frame;
+    Animation animation;
+};
+
+TEST_F(AnimationTest,switchImage){
     animation.Update(0,0.3);
     ASSERT_EQ(animation.getCurrentimage().y,0);
     ASSERT_EQ(animation.getCurrentimage().x,1);
@@ -27,11 +40,7 @@ TEST(AnimationTest,switchImage){
     ASSERT_EQ(animation.uvRect.top,0);
     ASSERT_EQ(animation.uvRect.left,0);
 }
-TEST(AnimationTest,Not_switching){
-    sf::Vector2u ImageCount(11,4);
-    sf::Texture animation_texture;
-    animation_texture.loadFromFile("C:/Users/HP/CLionProjects/PathToGlory/Resources/prisonerEditing2_.png");
-    Animation animation(&animation_texture,ImageCount,0.1);
+TEST_F(AnimationTest,Not_switching){
     animation.Update(2,0.09);
     ASSERT_EQ(animation.getCurrentimage().y,2);
     ASSERT_EQ(animation.getCurrentimage().x,0);

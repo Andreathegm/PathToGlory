@@ -5,6 +5,7 @@
 #include "../Game.cpp"
 #include <gmock/gmock.h>
 
+//global variable for some Test_cases
     auto map = new GameMap(5);
     Game game;
     GameTile *tile;

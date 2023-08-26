@@ -45,5 +45,21 @@ void Animation::setCurrentimage(const sf::Vector2u &currentimage) {
     Animation::currentimage = currentimage;
 }
 
+float Animation::getTotaltime() const {
+    return totaltime;
+}
+
+void Animation::setTotaltime(float totaltime) {
+    Animation::totaltime = totaltime;
+}
+
+float Animation::getSwitchTime() const {
+    return switch_time;
+}
+
+void Animation::setSwitchTime(float switchTime) {
+    switch_time = switchTime;
+}
+
 
 

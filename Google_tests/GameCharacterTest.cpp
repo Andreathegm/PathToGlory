@@ -15,8 +15,6 @@
 #include "gtest/gtest.h"
 
 class GameCharacterTest : public ::testing::Test{
-public:
-
 protected:
     void SetUp() override {
     map=new GameMap(5);
@@ -30,6 +28,7 @@ protected:
     void TearDown() override {
     delete map;
     }
+
 GameMap* map;
 sf::Texture WallTexture;
 sf::Texture CharacterTexture;

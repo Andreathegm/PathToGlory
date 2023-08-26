@@ -13,6 +13,7 @@
 class Animation {
 public:
     //const and destructor
+    Animation(){};
     Animation(sf::Texture* texture,sf::Vector2u imagecount,float switch_time);
 
 
@@ -24,6 +25,11 @@ public:
     void setImagecount(const sf::Vector2u &imagecount);
     const sf::Vector2u &getCurrentimage() const;
     void setCurrentimage(const sf::Vector2u &currentimage);
+    float getTotaltime() const;
+    void setTotaltime(float totaltime);
+    float getSwitchTime() const;
+    void setSwitchTime(float switchTime);
+
 
 public:
     //SpriteSheet_Selector
