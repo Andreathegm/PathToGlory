@@ -39,12 +39,12 @@ public:
 class GameTest : public ::testing::Test {
 public:
     void handleEvent(sf::Event& event){
-    game->setEvent(event);
 
+    game->setEvent(event);
     ON_CALL(*mockRenderWindow, pollEvent(::testing::_))
     .WillByDefault(::testing::DoAll(::testing::SetArgReferee<0>(event), ::testing::Return(true)));
-
     game->pollEvents(grid_pos, mockBlockblocks, obsTexture, walking, zoomfactor,view);
+
     }
 
 protected:

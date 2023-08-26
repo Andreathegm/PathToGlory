@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 3.5)
 
 # 'lib' is the folder with Google Test sources
  add_subdirectory(lib)
-#add_subdirectory(lib/googletest lib/googlemock )
 
 set(gtest_SOURCE_DIR lib/googletest)
 set(gmock_SOURCE_DIR lib/googlemock)

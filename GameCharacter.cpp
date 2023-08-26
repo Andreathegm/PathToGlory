@@ -145,6 +145,24 @@ GameCharacter::GameCharacter(GameMap *map) {
 
 }
 
+void GameCharacter::Linkmap(GameMap *map) {
+    this->map=map;
+
+}
+
+void GameCharacter::ApplayTextureToSprite(sf::Texture &texture) {
+    gctexture=texture;
+    gcSprite.setTexture(gctexture);
+    gcSprite.setTextureRect(sf::IntRect(266, 226, 25, 55));
+    gcSprite.scale(sf::Vector2f(1.5,1.5));
+
+
+}
+
+void GameCharacter::setAnimation(Animation *animation) {
+    GameCharacter::animation = animation;
+}
+
 
 
 

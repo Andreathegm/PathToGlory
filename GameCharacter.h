@@ -35,6 +35,8 @@ public:
 
     //METHOD
    //dynamic move
+    void Linkmap(GameMap* map);
+    void ApplayTextureToSprite(sf::Texture& texture);
     void move(std::string dir);
     void UpdateAnimation(int row,float deltatime);
     void setTexturerect(sf::IntRect rect);
@@ -47,6 +49,8 @@ public:
     //draw and animation
     void draw(sf::RenderWindow& window);
     Animation *getAnimation() const;
+
+    void setAnimation(Animation *animation);
 
 private:
 

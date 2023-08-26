@@ -14,32 +14,46 @@
 #include "../Animation.cpp"
 #include "gtest/gtest.h"
 
+class GameCharacterTest : public ::testing::Test{
+public:
 
-
-TEST(GameCharacterTest, MoveUp) {
-    GameCharacter character;
+protected:
+    void SetUp() override {
+    map=new GameMap(5);
+    Collision::CreateTextureAndBitmask(CharacterTexture,"C:/Users/HP/CLionProjects/PathToGlory/Resources/prisonerEditing2_.png");
+    Collision::CreateTextureAndBitmask(WallTexture,"C:/Users/HP/CLionProjects/PathToGlory/Resources/NewWall3.png");
+    character.Linkmap(map);
+    character.setPosition(sf::Vector2f(10,0));
+    character.ApplayTextureToSprite(CharacterTexture);
+    character.setAnimation(new Animation(&CharacterTexture, sf::Vector2u(11, 4), 0.1));
+    }
+    void TearDown() override {
+    delete map;
+    }
+GameMap* map;
+sf::Texture WallTexture;
+sf::Texture CharacterTexture;
+GameCharacter character;
+};
+TEST_F(GameCharacterTest, MoveUp) {
     character.setPosition(sf::Vector2f(0.0f, 0.0f));
-
     character.move("W");
 
     sf::Vector2f newPosition = character.getPosition();
     EXPECT_EQ(newPosition.x, 0.0f);
     EXPECT_EQ(newPosition.y, -0.5f);
 }
-TEST(GameCharacterTest, MoveLeft) {
-    GameCharacter character;
-    character.setPosition(sf::Vector2f(0.0f, 0.0f));
 
+TEST_F(GameCharacterTest, MoveLeft) {
+    character.setPosition(sf::Vector2f(0.0f, 0.0f));
     character.move("A");
 
     sf::Vector2f newPosition = character.getPosition();
     EXPECT_EQ(newPosition.x, -0.5f);
     EXPECT_EQ(newPosition.y, 0.0f);
 }
-TEST(GameCharacterTest, MoveDown) {
-    GameCharacter character;
+TEST_F(GameCharacterTest, MoveDown) {
     character.setPosition(sf::Vector2f(0.0f, 0.0f));
-
     character.move("S");
 
     sf::Vector2f newPosition = character.getPosition();
@@ -47,29 +61,23 @@ TEST(GameCharacterTest, MoveDown) {
     EXPECT_EQ(newPosition.y, 0.5f);
 }
 
-TEST(GameCharacterTest, MoveRight) {
-    GameCharacter character;
+TEST_F(GameCharacterTest, MoveRight) {
     character.setPosition(sf::Vector2f(0.0f, 0.0f));
-
     character.move("D");
 
     sf::Vector2f newPosition = character.getPosition();
     EXPECT_EQ(newPosition.x, 0.5f);
     EXPECT_EQ(newPosition.y, 0.0f);
 }
-TEST(GameCharacterTest, InvaliDirection) {
-    GameCharacter character;
+TEST_F(GameCharacterTest, InvaliDirection) {
     character.setPosition(sf::Vector2f(0.0f, 0.0f));
-
     character.move("F");
 
     sf::Vector2f newPosition = character.getPosition();
     EXPECT_EQ(newPosition.x, 0.0f);
     EXPECT_EQ(newPosition.y, 0.0f);
 }
-TEST(GridCollisonTest,LeftCollison){
-    auto map=new GameMap(5);
-    GameCharacter character(map);
+TEST_F(GameCharacterTest,Grid_LeftCollision){
     character.setPosition(sf::Vector2f(0.0f, 0.0f));
     character.move("A");
     character.GridCollision();
@@ -77,11 +85,10 @@ TEST(GridCollisonTest,LeftCollison){
     sf::Vector2f newPosition = character.getPosition();
     EXPECT_EQ(newPosition.x,0.0);
     EXPECT_EQ(newPosition.y,0.0);
-    delete map;
+
 }
-TEST(GridCollisonTest,TopCollision){
-    auto map=new GameMap(5);
-    GameCharacter character(map);
+
+TEST_F(GameCharacterTest,Grid_TopCollision){
     character.setPosition(sf::Vector2f(5.0f, 0.0f));
     character.move("W");
     character.GridCollision();
@@ -89,11 +96,8 @@ TEST(GridCollisonTest,TopCollision){
     sf::Vector2f newPosition = character.getPosition();
     EXPECT_EQ(newPosition.x,5.0);
     EXPECT_EQ(newPosition.y,0.0);
-    delete map;
 }
-TEST(GridCollisonTest,DownCollision) {
-    auto map = new GameMap(5);
-    GameCharacter character(map);
+TEST_F(GameCharacterTest,Grid_DownCollision) {
     character.setPosition(sf::Vector2f(5.0f,(map->getMapsize()-1)*map->getTilemap()[0][0]->getGridSizeF()));
     character.move("S");
     character.GridCollision();
@@ -101,37 +105,23 @@ TEST(GridCollisonTest,DownCollision) {
     sf::Vector2f newPosition = character.getPosition();
     EXPECT_EQ(newPosition.x, 5.0);
     EXPECT_EQ(newPosition.y,((map->getMapsize()-1)*(map->getTilemap()[0][0]->getGridSizeF()))-0.5);
-    delete map;
 }
 
-//TODO Wallcollision
-/*TEST(WallCollisonTest,RightWall) {
-    sf::Texture texture;
-    texture.loadFromFile("C:/Users/HP/CLionProjects/PathToGlory/Resources/prisonerEditing2_.png");
-    sf::Texture wallTexture;
-    wallTexture.loadFromFile("C:/Users/HP/CLionProjects/PathToGlory/Resources/NewWall3.png");
-    auto map = new GameMap(5);
-    GameCharacter character(texture,sf::Vector2f(63.5,0),map);
-    character.move("D");
-    map->getTilemap()[1][0]->setPos(sf::Vector2f(1,0));
-    map->getTilemap()[1][0]->setObsSpriteTexture(wallTexture);
-    map->getTilemap()[1][0]->setAccessible(false);
+TEST_F(GameCharacterTest,Wall) {
+    character.getGcSprite().scale(sf::Vector2f(0.8, 0.8));
+
+    map->getTilemap()[0][0]->setVisible(false);
+    map->getTilemap()[0][0]->setObsSpriteTexture(WallTexture,"x_dir");
+    map->getTilemap()[0][0]->setAccessible(false);
 
     character.collision(character.getGcSprite().getGlobalBounds().width,
                         character.getGcSprite().getGlobalBounds().height/2);
 
     sf::Vector2f newPosition = character.getPosition();
-    EXPECT_EQ(newPosition.x,150 );
+    EXPECT_EQ(newPosition.x,9.5 );
     EXPECT_EQ(newPosition.y,0);
-    delete map;
-}*/
-TEST(CharacterAnimation, UpdateTest) {
-    GameMap* map=new GameMap(5);
-    sf::Texture texture;
-    texture.loadFromFile("C:/Users/HP/CLionProjects/PathToGlory/Resources/prisonerEditing2_.png");
-    GameCharacter character(texture,sf::Vector2f(10,10),map);
-
-
+}
+TEST_F(GameCharacterTest, UpdateTest) {
     character.UpdateAnimation(0,0.1);
     EXPECT_EQ(character.getAnimation()->getCurrentimage().x, 1);
     EXPECT_EQ(character.getAnimation()->getCurrentimage().y, 0);
@@ -139,5 +129,4 @@ TEST(CharacterAnimation, UpdateTest) {
     character.UpdateAnimation(0,0.01);
     EXPECT_EQ(character.getAnimation()->getCurrentimage().x, 1);
     EXPECT_EQ(character.getAnimation()->getCurrentimage().y, 0);
-    delete map;
 }
