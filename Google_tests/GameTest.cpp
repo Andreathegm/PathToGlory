@@ -142,7 +142,6 @@ void RunWallPlacementTest( sf::Vector2u& grid_pos,  sf::Texture& wall_texture,sf
     tile=map->getTilemap()[grid_pos.x][grid_pos.y];
     game.handleWallPlacement(grid_pos, tile, wall_texture);
 
-    //TODO function of assertions
     ASSERT_EQ(tile->isAccessible(), false);
     ASSERT_EQ(tile->isVisible(), true);
     if(center)

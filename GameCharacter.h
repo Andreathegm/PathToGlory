@@ -12,7 +12,7 @@
 class GameCharacter {
 
 public:
-    //constructor and distructor
+    //constructor and destructor
     GameCharacter(sf::Texture& texture,sf::Vector2f pos,GameMap* map);
     explicit GameCharacter(GameMap* map);
     explicit GameCharacter();
@@ -34,6 +34,7 @@ public:
 
 
     //METHOD
+
    //dynamic move
     void Linkmap(GameMap* map);
     void ApplayTextureToSprite(sf::Texture& texture);
@@ -46,10 +47,11 @@ public:
     void GridCollision();
 
 
-    //draw and animation
+    //draw
     void draw(sf::RenderWindow& window);
-    Animation *getAnimation() const;
 
+    //animation
+    Animation *getAnimation() const;
     void setAnimation(Animation *animation);
 
 private:

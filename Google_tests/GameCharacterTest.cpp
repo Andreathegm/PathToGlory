@@ -16,6 +16,10 @@
 
 class GameCharacterTest : public ::testing::Test{
 protected:
+    void asserPos(){
+        ASSERT_EQ(character.getPosition().x,10.0f);
+        ASSERT_EQ(character.getPosition().y,10.f);
+    }
     void SetUp() override {
     map=new GameMap(5);
     Collision::CreateTextureAndBitmask(CharacterTexture,"C:/Users/HP/CLionProjects/PathToGlory/Resources/prisonerEditing2_.png");
@@ -34,21 +38,39 @@ sf::Texture WallTexture;
 sf::Texture CharacterTexture;
 GameCharacter character;
 };
+
+
+TEST_F(GameCharacterTest,SetPositionOutsideBoundaries){
+
+    character.setPosition(sf::Vector2f(10.0f, 10.0f)); //this position must  remain equal
+
+    character.setPosition(sf::Vector2f(-1.0f, 1.0f));
+    asserPos();
+    character.setPosition(sf::Vector2f(0.0f, 100000));
+    asserPos();
+    character.setPosition(sf::Vector2f(0.0f, -1.0f));
+    asserPos();
+    character.setPosition(sf::Vector2f(100000, 1.0f));
+    asserPos();
+
+}
+
+
 TEST_F(GameCharacterTest, MoveUp) {
-    character.setPosition(sf::Vector2f(0.0f, 0.0f));
+    character.setPosition(sf::Vector2f(0.0f, 1.0f));
     character.move("W");
 
     sf::Vector2f newPosition = character.getPosition();
     EXPECT_EQ(newPosition.x, 0.0f);
-    EXPECT_EQ(newPosition.y, -0.5f);
+    EXPECT_EQ(newPosition.y, 0.5f);
 }
 
 TEST_F(GameCharacterTest, MoveLeft) {
-    character.setPosition(sf::Vector2f(0.0f, 0.0f));
+    character.setPosition(sf::Vector2f(1.0f, 0.0f));
     character.move("A");
 
     sf::Vector2f newPosition = character.getPosition();
-    EXPECT_EQ(newPosition.x, -0.5f);
+    EXPECT_EQ(newPosition.x, 0.5f);
     EXPECT_EQ(newPosition.y, 0.0f);
 }
 TEST_F(GameCharacterTest, MoveDown) {

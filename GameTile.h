@@ -37,7 +37,7 @@ public:
     //info about position
     sf::Vector2f getPos() const;
     void setPos(const sf::Vector2f &posi);
-     sf::RectangleShape &getTile() ;
+    sf::RectangleShape &getTile() ;
     float getGridSizeF() const;
 
     // access to the grid tile

@@ -20,34 +20,29 @@ int main() {
     GameTile *destination;
     int currentPathIndex = 0;
     bool isPathComplete = false;
-    bool active[] = {false, false, false}; // when the first two are set to true a* starts
-
+    bool active[] = {false, false, false};// when the first two are set to true a* starts
     // adjustable walls
-    //GameTile *BlockBlocks;
     GameTile *BlockBlocks= nullptr;
     GameTile *misclick[] = {nullptr, nullptr}; //keep track of the pointer to the block,reset to standard value
     int clickcounter[] = {0, 0, 0}; // for how many times you click the wanting wall block
 
-    // create the Character
+    // create the Character and set him up
     sf::Texture heroTexture;
     Collision::CreateTextureAndBitmask(heroTexture,"C:/Users/HP/CLionProjects/PathToGlory/Resources/prisonerEditing2_.png");
     GameCharacter hero(heroTexture, sf::Vector2f(10, 10),&map);
     hero.getGcSprite().scale(sf::Vector2f(0.8, 0.8));
-
-
-
+    hero.setTexturerect(sf::IntRect(0,160,48,80));
 
     bool walking = false;
 
-
-    // time
+    // TIME
     float dt = 0.0;
     sf::Clock dtClock;
     float delayTime = 0.5f;
     sf::Clock animation_Clock;
     float deltatime;
 
-    // several mouse_positions
+    // Several mouse_positions
     sf::Vector2i mousePosScreen;
     sf::Vector2i mousePosWindow;
     sf::Vector2f mousePosView;
@@ -72,9 +67,9 @@ int main() {
     MainMenu mainMenu(MainWindow.getSize().x, MainWindow.getSize().y);
 
 
-    //Init BackgroundGridTexture
+    // BackgroundGridTexture for Grid
     sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("C:/Users/HP/CLionProjects/PathToGlory/Resources/background2.jpg"))
+    if(!Collision::CreateTextureAndBitmask(backgroundTexture,"C:/Users/HP/CLionProjects/PathToGlory/Resources/background2.jpg"))
         return -1;
     sf::Sprite BackgroundSprite(backgroundTexture);
     BackgroundSprite.setScale(map.getMapsize() * gridSizeU / BackgroundSprite.getGlobalBounds().width,
@@ -83,7 +78,7 @@ int main() {
 
    //BackgroundTexture for main menu
    sf::Texture TextureMenu;
-   if(!TextureMenu.loadFromFile("C:/Users/HP/CLionProjects/PathToGlory/Resources/PathB.png"))
+   if(!Collision::CreateTextureAndBitmask(TextureMenu,"C:/Users/HP/CLionProjects/PathToGlory/Resources/PathB.png"))
        return -1;
    sf::Sprite  BackgroudMenu;
    BackgroudMenu.setPosition(0,0);
@@ -92,7 +87,7 @@ int main() {
 
    //BackgroundTexture for CommandWin
     sf::Texture TextureCommand;
-    if(!TextureCommand.loadFromFile("C:/Users/HP/CLionProjects/PathToGlory/Resources/CommandWin.png"))
+    if(!Collision::CreateTextureAndBitmask(TextureCommand,"C:/Users/HP/CLionProjects/PathToGlory/Resources/CommandWin.png"))
         return -1;
     sf::Sprite  BackCommands;
     BackCommands.setPosition(0,0);
@@ -107,10 +102,6 @@ int main() {
     float viewspeed = 2.f;
     view.zoom(zoomFactor);
 
-
-
-
-//Init game element
 
     // tile selector
     sf::RectangleShape tileselector(sf::Vector2f(gridSizeF, gridSizeF));
@@ -132,7 +123,10 @@ int main() {
                     mainMenu.moveDown();
 
                 if (event.key.code == sf::Keyboard::Return) {
+                    //set up COMMAND Window
                     sf::RenderWindow COMMANDS(sf::VideoMode(1920, 1080), "Commanads");
+
+                    //set Up GAME window
                     Game game(1920, 1080);
                     game.Linkmap(&map);
                     game.getView().setCenter(game.getVideoMode().width / 2, game.getVideoMode().height / 2);
@@ -146,11 +140,14 @@ int main() {
                         //Game cicle
                         animation_Clock.restart();
                         while (game.IsRunning()) {
+
+                            //Update all mouse Positions
                             mousePosScreen = sf::Mouse::getPosition();
                             mousePosWindow = sf::Mouse::getPosition(game.getWindow());
                             game.setView(view);
                             mousePosView = game.getWindow().mapPixelToCoords(mousePosWindow);
 
+                            //Update Tile selector
                             if (game.TileSelectorBoundaries(mousePosView)) {
                                 mousePosGrid.x = static_cast<unsigned >(mousePosView.x) / gridSizeU;
                                 mousePosGrid.y = static_cast<unsigned > (mousePosView.y) / gridSizeU;
@@ -160,6 +157,7 @@ int main() {
                                 tileselector.setOutlineColor(sf::Color::Transparent);
                             }
 
+                            //Move the view
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad4)) {
                                 view.move(-viewspeed, 0);
                             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad8)) {
@@ -169,7 +167,6 @@ int main() {
                             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad6)) {
                                 view.move(viewspeed, 0);
                             }
-                          //  sf::Event ev;
                             while(game.pollEvent())
                             game.pollEvents(mousePosGrid, BlockBlocks, obs_text,walking,zoomFactor,view);
 
@@ -183,7 +180,7 @@ int main() {
                                 }
                                 //Check if the start position is allowed
                                 if (mousePosView.x >= 0 && mousePosView.x < map.getMapsize() * gridSizeF &&
-                                    mousePosView.y >= 0 && mousePosView.y < map.getMapsize() * gridSizeF) {
+                                    mousePosView.y >= 0 && mousePosView.y < map.getMapsize() * gridSizeF ) {
 
                                     start = map.getTilemap()[mousePosGrid.x][mousePosGrid.y];
 
@@ -194,6 +191,7 @@ int main() {
                                         mousePosGrid.x += gridSizeU / 4;
                                         mousePosGrid.y *= gridSizeU;
                                         hero.setPosition(static_cast<sf::Vector2f>(mousePosGrid));
+                                        hero.setTexturerect(sf::IntRect(0,160,48,80));
                                         active[0] = true;
                                         clickcounter[0]++;
                                     }
@@ -213,6 +211,7 @@ int main() {
                                     clickcounter[1]++;
                                 }
                             }
+                            //Full and Partial Reset
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
                                 map.reset();
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
@@ -235,6 +234,7 @@ int main() {
 
                                             map.getTilemap()[bestPath[currentPathIndex].x][bestPath[currentPathIndex].y]->getTile().setFillColor(
                                                     sf::Color::Green);
+
                                             // Increment Path Index to move to next position
                                             currentPathIndex++;
 
@@ -250,11 +250,11 @@ int main() {
                                     }
                                 }
                             }
-                            if (active[2]) {
+                            /*if (active[2]) {
                                 for (bool &i: active)
                                     i = false;
                                 isPathComplete = false;
-                            }
+                            }*/
 
                             //update UI
                             std::stringstream ss;
@@ -265,6 +265,8 @@ int main() {
 
                             text.setString(ss.str());
 
+
+                            //Move the hero
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
                                 walking = true;
                                 deltatime = animation_Clock.getElapsedTime().asSeconds();
@@ -329,9 +331,13 @@ int main() {
                                     static_cast<int>(hero.getAnimation()->uvRect.height ),
 
                             };
-
-
+                            if(walking)
                             hero.setTexturerect(rectangle);
+
+                            if (active[2]) {
+                                for (bool &i: active)
+                                    i = false;
+                                isPathComplete = false;}
 
                             hero.GridCollision();
 
@@ -340,7 +346,7 @@ int main() {
                                 view.setCenter(hero.getPosition().x, hero.getPosition().y);
                                 tileselector.setOutlineColor(sf::Color::Transparent);
                             }
-
+                            //Clean,close
                             COMMANDS.close();
                             game.clear();
 
@@ -349,11 +355,11 @@ int main() {
                             game.getWindow().draw(BackgroundSprite);
                             map.draw(game.getWindow());
                             game.draw(hero.getGcSprite());
-
                             game.draw(tileselector);
                             game.draw(text);
                             auto def_View = game.getDefaultView();
                             game.setView(def_View);
+
                             //done drawing
                             game.display();
 
@@ -366,13 +372,13 @@ int main() {
                                 if(ev.type==sf::Event::Closed)
                                     COMMANDS.close();
                             }
-
-                          //  window.close();
+                            //Clean,Close
                             game.close();
                             COMMANDS.clear();
+                            //draw
                             COMMANDS.draw(BackCommands);
+                            //display
                             COMMANDS.display();
-
                         }
 
                     }
@@ -383,9 +389,12 @@ int main() {
                 }
             }
         }
+        //Clean,Close
         MainWindow.clear();
+        //draw
         MainWindow.draw(BackgroudMenu);
         mainMenu.Draw(MainWindow);
+        //display
         MainWindow.display();
     }
 

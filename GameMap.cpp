@@ -76,8 +76,8 @@ std::vector<sf::Vector2f> GameMap::aStar( GameTile* start, GameTile* destination
             break;
         }
 
-        float dx[8] = {1, 1, 0, -1, -1, -1, 0, 1};
-        float dy[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+        const float dx[8] = {1, 1, 0, -1, -1, -1, 0, 1};
+        const float dy[8] = {0, 1, 1, 1, 0, -1, -1, -1};
 
         for (int i = 0; i < 8; ++i) {
            sf::Vector2f new_pos(current->getPos().x+dx[i],current->getPos().y+dy[i]);

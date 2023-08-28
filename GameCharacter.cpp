@@ -19,9 +19,11 @@ const sf::Texture &GameCharacter::getGctexture() const{
 }
 
 void GameCharacter::setPosition(const sf::Vector2f &position) {
+    if(position.x>=0 && position.x<map->getMapsize()*map->getTilemap()[0][0]->getGridSizeF()
+    && position.y>=0 && position.y<map->getMapsize()*map->getTilemap()[0][0]->getGridSizeF()){
     GameCharacter::position=position;
     gcSprite.setPosition(position);
-
+    }
 
 }
 

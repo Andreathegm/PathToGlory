@@ -88,7 +88,10 @@ bool Game::TileSelectorBoundaries(sf::Vector2f mousePosView) {
 void Game::handleWallPlacement(sf::Vector2u & mousePosGrid, GameTile *BlockBlocks,sf::Texture& obs_text ) {
         if (mousePosGrid.x >= 0 && mousePosGrid.x < map->getMapsize() &&
             mousePosGrid.y >= 0 &&
-            mousePosGrid.y < map->getMapsize())
+            mousePosGrid.y < map->getMapsize()&& map->getTilemap()[mousePosGrid.x]
+            [mousePosGrid.y]->getTile().getFillColor()!=sf::Color::Blue &&
+            map->getTilemap()[mousePosGrid.x]
+            [mousePosGrid.y]->getTile().getFillColor()!=sf::Color::Red)
             BlockBlocks = map->getTilemap()[mousePosGrid.x][mousePosGrid.y];
         else
             return;
@@ -547,6 +550,10 @@ bool Game::pollEvent() {
 Game::Game() {
     map= nullptr;
 
+}
+
+void Game::SetWindow(sf::RenderWindow *new_window) {
+    window=new_window;
 }
 
 
