@@ -29,6 +29,7 @@ TEST(F_cost,standarsum){
     delete tile;
 }
 TEST(F_cost,After_a_star_algorithm){
+    //Test if F_cost has expected value after a* algorithm takes place
     auto* map=new GameMap(5);
     auto start=map->getTilemap()[0][0];
     auto destination=map->getTilemap()[4][4];

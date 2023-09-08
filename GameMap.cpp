@@ -53,20 +53,31 @@ std::vector<sf::Vector2f> GameMap::aStar( GameTile* start, GameTile* destination
             return lhs->f_cost() > rhs->f_cost();
         }
     };
+    //init Vars
+
     std::vector<sf::Vector2f> findPath;
+
+    //Used to store GameTile* for eventually retrace the path
     std::priority_queue<GameTile*,std::vector<GameTile*>,CompareTiles> openSet;
-     std::unordered_map<int, GameTile*> closedSet;
+
+    //Used to store Gametile* already explored
+    std::unordered_map<int, GameTile*> closedSet;
+
     start->setG(0);
     start->setH(start->EuclidianDistance(*destination));
+
     openSet.push(start);
     while (!openSet.empty()) {
+
+        //Take first object on the queue and assign to current and then remove it
         auto current = openSet.top();
         openSet.pop();
         if (current->getPos() == destination->getPos()) {
             auto tmp = current;
+
+            //While cicle that inserts positions on the dedicated vector
             while (tmp != nullptr) {
                 findPath.push_back(tmp->getPos());
-                //tmp->getTile().setFillColor(sf::Color::Green);
                 if(tmp==start){
                     break;
                 }
@@ -83,6 +94,7 @@ std::vector<sf::Vector2f> GameMap::aStar( GameTile* start, GameTile* destination
            sf::Vector2f new_pos(current->getPos().x+dx[i],current->getPos().y+dy[i]);
 
             if (new_pos.x >= 0 && new_pos.x < mapSize && new_pos.y >= 0 && new_pos.y < mapSize && tilemap[new_pos.x][new_pos.y]->isAccessible()) {
+                //Check if diagonal direction is allowed, if it is not skip to the next iterations
                if (i % 2 != 0 && !tilemap[current->getPos().x][new_pos.y]->isAccessible() && !tilemap[new_pos.x][current->getPos().y]->isAccessible()) {
                    continue;
                 }
@@ -90,6 +102,8 @@ std::vector<sf::Vector2f> GameMap::aStar( GameTile* start, GameTile* destination
                 int new_h = tilemap[new_pos.x][new_pos.y]->EuclidianDistance(*destination)*10;
                 int new_f = new_g + new_h;
 
+                // if the key does not match return iterator to the end , if the new_f is less than the previous GameTile*
+                // must be put in the ClosedSet
                 if (closedSet.find(new_pos.y * mapSize + new_pos.x) == closedSet.end() || new_f < tilemap[new_pos.x][new_pos.y]->f_cost()) {
                     tilemap[new_pos.x][new_pos.y]->setG(new_g);
                     tilemap[new_pos.x][new_pos.y]->setH(new_h);

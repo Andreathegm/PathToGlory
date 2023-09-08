@@ -19,6 +19,7 @@ public:
     Game(unsigned width,unsigned height);
     Game();
     virtual ~Game();
+    //connect map to the Game
     void Linkmap(GameMap* map);
 
     //METHODS
@@ -29,6 +30,7 @@ public:
 
     //Events
     bool pollEvent();
+    //Handle inputs
     virtual void pollEvents(sf::Vector2u & mousePosGrid,GameTile* BlockBlocks,sf::Texture& obs_text,bool& walking,float&zoomfactor,sf::View& view);
     bool TileSelectorBoundaries(sf::Vector2f mousePosView);
     void handleWallPlacement(sf::Vector2u & mousePosGrid,GameTile* BlockBlocks,sf::Texture& obs_text);//Change texture of the wall
@@ -52,9 +54,9 @@ public:
     //getter for the window
     const sf::VideoMode &getVideoMode() const;
     sf::RenderWindow &getWindow();
-    
-    const sf::Event &getEvent() const;
 
+    //getter and setter for events
+    const sf::Event &getEvent() const;
     void setEvent(const sf::Event &event);
 
 private:

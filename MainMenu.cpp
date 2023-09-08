@@ -42,6 +42,7 @@ void MainMenu::Draw(sf::RenderWindow &rederTarget) {
 
 void MainMenu::moveUp() {
     if(MainmenuSelected-1>=0)
+        //when selecting new Text the previous must turn white
         _mainmenu[MainmenuSelected].setFillColor(sf::Color::White);
 
     MainmenuSelected--;

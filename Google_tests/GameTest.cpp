@@ -134,7 +134,6 @@ TEST_F(GameTest, ZoomOut) {
 
 }
 
-sf::IntRect rect;
 
 void RunWallPlacementTest( sf::Vector2u& grid_pos,  sf::Texture& wall_texture,sf::IntRect& rect,bool center=false) {
     wall_texture.loadFromFile("C:/Users/HP/CLionProjects/PathToGlory/Resources/NewWall3.png");
@@ -153,6 +152,8 @@ void RunWallPlacementTest( sf::Vector2u& grid_pos,  sf::Texture& wall_texture,sf
     ASSERT_EQ(tile->getObsSprite().getTextureRect().height, rect.height);
     map->reset();
 }
+
+sf::IntRect rect;
 
 TEST(WallTesting,Stright){
     grid_pos={2,1};

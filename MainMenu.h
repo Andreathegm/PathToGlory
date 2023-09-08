@@ -5,6 +5,7 @@
 #ifndef PATHTOGLORY_MAINMENU_H
 #define PATHTOGLORY_MAINMENU_H
 #include <SFML/Graphics.hpp>
+//number for max selectable text
 #define MaxMenu 3
 class MainMenu {
 public:

@@ -3,6 +3,9 @@
 //
 #include <gtest/gtest.h>
 #include "../GameMap.h"
+
+// helper functions
+
 void setTile(GameTile* tile,bool Acces=false,bool center=true,bool visibl=true,sf::Color color=sf::Color::Blue){
     tile->setAccessible(Acces);
     tile->setCenter(center);

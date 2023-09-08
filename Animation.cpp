@@ -21,6 +21,7 @@ void Animation::Update(int row, float delta_time) {
         totaltime-=delta_time;
         currentimage.x++;
 
+       // restart the cicle_frame
         if(currentimage.x>=imagecount.x)
             currentimage.x=0;
     }

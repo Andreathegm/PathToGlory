@@ -36,7 +36,7 @@ public:
     sf::FloatRect  uvRect;
 
 private:
-    sf::Vector2u imagecount;
+    sf::Vector2u imagecount; //used to  select the right from source images/spritesheet
     sf::Vector2u currentimage;
 
     // time for animations
