@@ -30,6 +30,44 @@ TEST(GamMapTest,aStar){
         ASSERT_EQ(i.x,value);
         ASSERT_EQ(i.y,value++);
     }
+    delete map;
+}
+TEST(GamMapTest,aStar_unacessibleWalls){
+    //Expected Result
+    std::vector<sf::Vector2f> ExpectedPath{
+            {0,0},{0,1},
+            {1,2},{1,3},
+            {2,4},{3,4},
+            {4,3},{3,2},
+            {2,1},{2,0}
+    };
+    auto* map=new GameMap(5);
+
+    //Set obstacles
+    map->getTilemap()[1][0]->setAccessible(false);
+    map->getTilemap()[1][1]->setAccessible(false);
+    map->getTilemap()[2][2]->setAccessible(false);
+    map->getTilemap()[2][3]->setAccessible(false);
+    map->getTilemap()[3][3]->setAccessible(false);
+    map->getTilemap()[4][1]->setAccessible(false);
+
+
+    auto start= map->getTilemap()[0][0];
+    auto destination=map->getTilemap()[2][0];
+    std::vector<sf::Vector2f> path = map->aStar(start,destination);
+
+    auto Expected_itr= ExpectedPath.begin();
+    auto itr=path.begin();
+
+    while(itr!=path.end()&& Expected_itr!=ExpectedPath.end()){
+        ASSERT_EQ(itr->x,Expected_itr->x);
+        ASSERT_EQ(itr->y,Expected_itr->y);
+        ++itr;
+        ++Expected_itr;
+
+    }
+
+   delete map;
 }
 TEST(GamMapTest,Fullreset){
     auto* map=new GameMap(5);
@@ -42,7 +80,9 @@ TEST(GamMapTest,Fullreset){
             AsserTile(k, true,false,false,sf::Color::Transparent);
         }
     }
+    delete map;
 }
+
 TEST(GamMapTest,PartialReset){
     auto* map=new GameMap(5);
     auto tile=map->getTilemap()[1][1];
@@ -67,4 +107,5 @@ TEST(GamMapTest,PartialReset){
             }
         }
     }
+    delete map;
 }
